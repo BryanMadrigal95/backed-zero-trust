@@ -1,0 +1,365 @@
+Welcome to Ubuntu 26.04 LTS (GNU/Linux 7.0.0-1006-aws x86_64)
+
+ * Documentation:  https://docs.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+ System information as of Tue Oct  6 04:28:06 UTC 2026
+
+  System load:  0.0               Temperature:           -273.1 C
+  Usage of /:   39.5% of 6.61GB   Processes:             125
+  Memory usage: 32%               Users logged in:       0
+  Swap usage:   0%                IPv4 address for ens5: 10.0.2.117
+
+ * Ubuntu Pro delivers the most comprehensive open source security and
+   compliance features.
+
+   https://ubuntu.com/aws/pro
+
+Expanded Security Maintenance for Applications is not enabled.
+
+178 updates can be applied immediately.
+127 of these updates are standard security updates.
+To see these additional updates run: apt list --upgradable
+
+Enable ESM Apps to receive additional future security updates.
+See https://ubuntu.com/esm or run: sudo pro status
+
+
+Last login: Tue Oct  6 03:05:51 2026 from 18.206.107.28
+ubuntu@ip-10-0-2-117:~$ sudo a2enmod rewrite proxy Proxy HTTP headers ssl
+sudo systemctl restart apache2
+Module rewrite already enabled
+Enabling module proxy.
+ERROR: Module Proxy does not exist!
+ERROR: Module HTTP does not exist!
+Module headers already enabled
+Considering dependency mime for ssl:
+Module mime already enabled
+Considering dependency socache_shmcb for ssl:
+Module socache_shmcb already enabled
+Module ssl already enabled
+To activate the new configuration, you need to run:
+  systemctl restart apache2
+ubuntu@ip-10-0-2-117:~$ sudo a2enmod rewrite proxy Proxy HTTP headers ssl
+Module rewrite already enabled
+Module proxy already enabled
+ERROR: Module Proxy does not exist!
+ERROR: Module HTTP does not exist!
+Module headers already enabled
+Considering dependency mime for ssl:
+Module mime already enabled
+Considering dependency socache_shmcb for ssl:
+Module socache_shmcb already enabled
+Module ssl already enabled
+ubuntu@ip-10-0-2-117:~$ sudo systemctl restart apache2
+ubuntu@ip-10-0-2-117:~$ sudo bash -c 'cat << "EOF" > /var/www/html/.htaccess
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
+EOF'
+ubuntu@ip-10-0-2-117:~$ curl -I  http://localhost:3000/api/auth
+curl: (7) Failed to connect to localhost port 3000 after 0 ms: Could not connect to server
+ubuntu@ip-10-0-2-117:~$ curl -I  http://10.1.4.34:3000/api/auth
+HTTP/1.1 404 Not Found
+X-Powered-By: Express
+Access-Control-Allow-Origin: *
+Content-Security-Policy: default-src 'none'
+X-Content-Type-Options: nosniff
+Content-Type: text/html; charset=utf-8
+Content-Length: 148
+Date: Tue, 06 Oct 2026 04:35:17 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+ubuntu@ip-10-0-2-117:~$ sudo nano /etc/apache2/sites-available/000-default-le-ssl.conf
+ubuntu@ip-10-0-2-117:~$ sudo apachectl configtest
+AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 10.0.2.117. Set the 'ServerName' directive globally to suppress this message
+Syntax OK
+ubuntu@ip-10-0-2-117:~$ sudo systemctl restart apache2
+ubuntu@ip-10-0-2-117:~$ curl -k -I  http://10.1.4.34:3000/api/auth
+HTTP/1.1 404 Not Found
+X-Powered-By: Express
+Access-Control-Allow-Origin: *
+Content-Security-Policy: default-src 'none'
+X-Content-Type-Options: nosniff
+Content-Type: text/html; charset=utf-8
+Content-Length: 148
+Date: Tue, 06 Oct 2026 04:41:52 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+ubuntu@ip-10-0-2-117:~$ sudo apt update 
+Hit:1 http://us-east-1.ec2.archive.ubuntu.com/ubuntu resolute InRelease
+Get:2 http://us-east-1.ec2.archive.ubuntu.com/ubuntu resolute-updates InRelease [137 kB]                
+Hit:3 http://us-east-1.ec2.archive.ubuntu.com/ubuntu resolute-backports InRelease                       
+Hit:4 http://security.ubuntu.com/ubuntu resolute-security InRelease                                     
+Hit:5 https://deb.nodesource.com/node_20.x nodistro InRelease                                           
+Get:6 http://us-east-1.ec2.archive.ubuntu.com/ubuntu resolute-updates/main amd64v3 Packages [730 kB]
+Get:7 http://us-east-1.ec2.archive.ubuntu.com/ubuntu resolute-updates/universe amd64v3 Packages [321 kB]
+Fetched 1188 kB in 0s (3511 kB/s)                       
+173 packages can be upgraded. Run 'apt list --upgradable' to see them.
+ubuntu@ip-10-0-2-117:~$ sudo apt install fail2ban -y
+Installing:                     
+  fail2ban
+
+Installing dependencies:
+  python3-pyasyncore  python3-pyinotify  whois
+
+Suggested packages:
+  mailx  monit  sqlite3  python-pyinotify-doc
+
+Summary:
+  Upgrading: 0, Installing: 4, Removing: 0, Not Upgrading: 173
+  Download size: 510 kB
+  Space needed: 2620 kB / 4276 MB available
+
+Get:1 http://us-east-1.ec2.archive.ubuntu.com/ubuntu resolute/universe amd64v3 fail2ban all 1.1.0-9 [421 kB]
+Get:2 http://us-east-1.ec2.archive.ubuntu.com/ubuntu resolute/main amd64v3 python3-pyasyncore all 1.0.2-3build1 [10.4 kB]
+Get:3 http://us-east-1.ec2.archive.ubuntu.com/ubuntu resolute/main amd64v3 python3-pyinotify all 0.9.6-5build1 [25.5 kB]
+Get:4 http://us-east-1.ec2.archive.ubuntu.com/ubuntu resolute/main amd64v3 whois amd64 5.6.6 [52.6 kB]
+Fetched 510 kB in 0s (8241 kB/s) 
+Selecting previously unselected package fail2ban.
+(Reading database ... 92443 files and directories currently installed.)
+Preparing to unpack .../fail2ban_1.1.0-9_all.deb ...
+Unpacking fail2ban (1.1.0-9) ...
+Selecting previously unselected package python3-pyasyncore.
+Preparing to unpack .../python3-pyasyncore_1.0.2-3build1_all.deb ...
+Unpacking python3-pyasyncore (1.0.2-3build1) ...
+Selecting previously unselected package python3-pyinotify.
+Preparing to unpack .../python3-pyinotify_0.9.6-5build1_all.deb ...
+Unpacking python3-pyinotify (0.9.6-5build1) ...
+Selecting previously unselected package whois.
+Preparing to unpack .../whois_5.6.6_amd64v3.deb ...
+Unpacking whois (5.6.6) ...
+Setting up whois (5.6.6) ...
+Setting up fail2ban (1.1.0-9) ...
+Created symlink '/etc/systemd/system/multi-user.target.wants/fail2ban.service' → '/usr/lib/systemd/system/fail2ban.service'.
+Setting up python3-pyasyncore (1.0.2-3build1) ...
+Setting up python3-pyinotify (0.9.6-5build1) ...
+Processing triggers for man-db (2.13.1-1build1) ...
+Scanning processes...                                                                                                                                 
+Scanning linux images...                                                                                                                              
+
+Running kernel seems to be up-to-date.
+
+No services need to be restarted.
+
+No containers need to be restarted.
+
+No user sessions are running outdated binaries.
+
+No VM guests are running outdated hypervisor (qemu) binaries on this host.
+ubuntu@ip-10-0-2-117:~$ sudo nano /etc/fail2ban/filter.d/apache-login.conf
+ubuntu@ip-10-0-2-117:~$ sudo nano /etc/fail2ban/jail.d/apache-login.conf
+ubuntu@ip-10-0-2-117:~$ sudo systemctl restart fail2ban
+ubuntu@ip-10-0-2-117:~$ sudo fail2ban-client status
+Status
+|- Number of jail:      2
+`- Jail list:   apache-login, sshd
+ubuntu@ip-10-0-2-117:~$ sudo fail2ban-client status apache-login
+Status for the jail: apache-login
+|- Filter
+|  |- Currently failed: 0
+|  |- Total failed:     0
+|  `- File list:        /var/log/apache2/access.log
+`- Actions
+   |- Currently banned: 0
+   |- Total banned:     0
+   `- Banned IP list:
+ubuntu@ip-10-0-2-117:~$ sudo fail2ban-client status
+Status
+|- Number of jail:      2
+`- Jail list:   apache-login, sshd
+ubuntu@ip-10-0-2-117:~$ sudo fail2ban-client status apache-login
+Status for the jail: apache-login
+|- Filter
+|  |- Currently failed: 0
+|  |- Total failed:     0
+|  `- File list:        /var/log/apache2/access.log
+`- Actions
+   |- Currently banned: 0
+   |- Total banned:     0
+   `- Banned IP list:
+ubuntu@ip-10-0-2-117:~$ sudo fail2ban-client status apache-login
+Status for the jail: apache-login
+|- Filter
+|  |- Currently failed: 0
+|  |- Total failed:     0
+|  `- File list:        /var/log/apache2/access.log
+`- Actions
+   |- Currently banned: 0
+   |- Total banned:     0
+   `- Banned IP list:
+ubuntu@ip-10-0-2-117:~$ sudo fail2ban-client status apache-login
+Status for the jail: apache-login
+|- Filter
+|  |- Currently failed: 0
+|  |- Total failed:     0
+|  `- File list:        /var/log/apache2/access.log
+`- Actions
+   |- Currently banned: 0
+   |- Total banned:     0
+   `- Banned IP list:
+ubuntu@ip-10-0-2-117:~$ sudo fail2ban-client status apache-login
+Status for the jail: apache-login
+|- Filter
+|  |- Currently failed: 0
+|  |- Total failed:     0
+|  `- File list:        /var/log/apache2/access.log
+`- Actions
+   |- Currently banned: 0
+   |- Total banned:     0
+   `- Banned IP list:
+ubuntu@ip-10-0-2-117:~$ sudo fail2ban-client status
+Status
+|- Number of jail:      2
+`- Jail list:   apache-login, sshd
+ubuntu@ip-10-0-2-117:~$ sudo systemctl restart fail2ban
+ubuntu@ip-10-0-2-117:~$ sudo fail2ban-client status
+Status
+|- Number of jail:      2
+`- Jail list:   apache-login, sshd
+ubuntu@ip-10-0-2-117:~$ sudo fail2ban-client status apache-login
+Status for the jail: apache-login
+|- Filter
+|  |- Currently failed: 0
+|  |- Total failed:     0
+|  `- File list:        /var/log/apache2/access.log
+`- Actions
+   |- Currently banned: 0
+   |- Total banned:     0
+   `- Banned IP list:
+ubuntu@ip-10-0-2-117:~$ sudo tail -n 30 /var/log/fail2ban.log
+2026-10-06 04:54:24,700 fail2ban.actions        [12857]: NOTICE  [sshd] Flush ticket(s) with nftables
+2026-10-06 04:54:24,731 fail2ban.actions        [12857]: NOTICE  [apache-login] Flush ticket(s) with nftables
+2026-10-06 04:54:24,849 fail2ban.jail           [12857]: INFO    Jail 'sshd' stopped
+2026-10-06 04:54:24,849 fail2ban.jail           [12857]: INFO    Jail 'apache-login' stopped
+2026-10-06 04:54:24,849 fail2ban.database       [12857]: INFO    Connection to database closed.
+2026-10-06 04:54:24,850 fail2ban.server         [12857]: INFO    Exiting Fail2ban
+2026-10-06 04:54:25,013 fail2ban.server         [12994]: INFO    --------------------------------------------------
+2026-10-06 04:54:25,013 fail2ban.server         [12994]: INFO    Starting Fail2ban v1.1.0
+2026-10-06 04:54:25,013 fail2ban.observer       [12994]: INFO    Observer start...
+2026-10-06 04:54:25,016 fail2ban.database       [12994]: INFO    Connected to fail2ban persistent database '/var/lib/fail2ban/fail2ban.sqlite3'
+2026-10-06 04:54:25,017 fail2ban.jail           [12994]: INFO    Creating new jail 'sshd'
+2026-10-06 04:54:25,020 fail2ban.jail           [12994]: INFO    Jail 'sshd' uses systemd {}
+2026-10-06 04:54:25,020 fail2ban.jail           [12994]: INFO    Initiated 'systemd' backend
+2026-10-06 04:54:25,021 fail2ban.filter         [12994]: INFO      maxLines: 1
+2026-10-06 04:54:25,032 fail2ban.filtersystemd  [12994]: INFO    [sshd] Added journal match for: '_SYSTEMD_UNIT=ssh.service + _COMM=sshd'
+2026-10-06 04:54:25,032 fail2ban.filter         [12994]: INFO      maxRetry: 5
+2026-10-06 04:54:25,032 fail2ban.filter         [12994]: INFO      findtime: 600
+2026-10-06 04:54:25,032 fail2ban.actions        [12994]: INFO      banTime: 600
+2026-10-06 04:54:25,032 fail2ban.filter         [12994]: INFO      encoding: UTF-8
+2026-10-06 04:54:25,032 fail2ban.jail           [12994]: INFO    Creating new jail 'apache-login'
+2026-10-06 04:54:25,037 fail2ban.jail           [12994]: INFO    Jail 'apache-login' uses pyinotify {}
+2026-10-06 04:54:25,039 fail2ban.jail           [12994]: INFO    Initiated 'pyinotify' backend
+2026-10-06 04:54:25,040 fail2ban.filter         [12994]: INFO      maxRetry: 5
+2026-10-06 04:54:25,040 fail2ban.filter         [12994]: INFO      findtime: 600
+2026-10-06 04:54:25,040 fail2ban.actions        [12994]: INFO      banTime: 600
+2026-10-06 04:54:25,040 fail2ban.filter         [12994]: INFO      encoding: UTF-8
+2026-10-06 04:54:25,040 fail2ban.filter         [12994]: INFO    Added logfile: '/var/log/apache2/access.log' (pos = 15367, hash = dd81f5045df000d3c664b6fda2157f1506e98702)
+2026-10-06 04:54:25,041 fail2ban.jail           [12994]: INFO    Jail 'sshd' started
+2026-10-06 04:54:25,042 fail2ban.filtersystemd  [12994]: INFO    [sshd] Jail is in operation now (process new journal entries)
+2026-10-06 04:54:25,043 fail2ban.jail           [12994]: INFO    Jail 'apache-login' started
+ubuntu@ip-10-0-2-117:~$ sudo fail2ban-client status apache-login
+Status for the jail: apache-login
+|- Filter
+|  |- Currently failed: 0
+|  |- Total failed:     0
+|  `- File list:        /var/log/apache2/access.log
+`- Actions
+   |- Currently banned: 0
+   |- Total banned:     0
+   `- Banned IP list:
+ubuntu@ip-10-0-2-117:~$ sudo systemctl restart fail2ban
+ubuntu@ip-10-0-2-117:~$ sudo fail2ban-client status apache-login
+Status for the jail: apache-login
+|- Filter
+|  |- Currently failed: 0
+|  |- Total failed:     0
+|  `- File list:        /var/log/apache2/access.log
+`- Actions
+   |- Currently banned: 0
+   |- Total banned:     0
+   `- Banned IP list:
+ubuntu@ip-10-0-2-117:~$ sudo tail -n 30 /var/log/apache2/access.log
+189.150.12.144 - - [06/Oct/2026:04:51:56 +0000] "GET /favicon.svg HTTP/1.1" 200 10191 "https://alex.freedynamicdns.org/login" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36"
+177.231.65.109 - - [06/Oct/2026:04:51:57 +0000] "GET /login HTTP/1.1" 200 6035 "https://www.google.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36"
+177.231.65.109 - - [06/Oct/2026:04:51:57 +0000] "GET /assets/index-JKKp7YFB.js HTTP/1.1" 200 88215 "https://alex.freedynamicdns.org/login" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36"
+177.231.65.109 - - [06/Oct/2026:04:51:57 +0000] "GET /assets/index-BCszI2i-.css HTTP/1.1" 200 5742 "https://alex.freedynamicdns.org/login" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36"
+177.231.65.109 - - [06/Oct/2026:04:51:57 +0000] "GET /favicon.svg HTTP/1.1" 200 10191 "https://alex.freedynamicdns.org/login" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36"
+189.150.12.144 - - [06/Oct/2026:04:52:14 +0000] "-" 408 5041 "-" "-"
+177.231.65.109 - - [06/Oct/2026:04:54:13 +0000] "GET /login HTTP/1.1" 200 2404 "https://www.google.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36"
+177.231.65.109 - - [06/Oct/2026:04:55:22 +0000] "GET /login HTTP/1.1" 200 4968 "-" "WhatsApp/2.23.20.0"
+177.231.65.109 - - [06/Oct/2026:04:55:22 +0000] "GET /favicon.svg HTTP/1.1" 200 10191 "-" "WhatsApp/2.23.20.0"
+177.231.65.109 - - [06/Oct/2026:04:55:34 +0000] "GET /login HTTP/1.1" 200 6033 "-" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36"
+177.231.65.109 - - [06/Oct/2026:04:55:34 +0000] "GET /assets/index-JKKp7YFB.js HTTP/1.1" 200 88215 "https://alex.freedynamicdns.org/login" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36"
+177.231.65.109 - - [06/Oct/2026:04:55:34 +0000] "GET /assets/index-BCszI2i-.css HTTP/1.1" 200 5742 "https://alex.freedynamicdns.org/login" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36"
+177.231.65.109 - - [06/Oct/2026:04:55:35 +0000] "GET /favicon.svg HTTP/1.1" 200 11603 "https://alex.freedynamicdns.org/login" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36"
+177.231.65.109 - - [06/Oct/2026:04:56:30 +0000] "GET /login HTTP/1.1" 200 2404 "-" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36"
+177.231.65.109 - - [06/Oct/2026:04:56:32 +0000] "GET /login HTTP/1.1" 200 992 "-" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36"
+177.231.65.109 - - [06/Oct/2026:04:57:34 +0000] "GET /login HTTP/1.1" 200 2404 "-" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36"
+177.231.65.109 - - [06/Oct/2026:04:57:42 +0000] "GET /login HTTP/1.1" 200 2404 "https://www.google.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36"
+177.231.65.109 - - [06/Oct/2026:04:57:42 +0000] "GET /login HTTP/1.1" 200 992 "https://www.google.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36"
+177.231.65.109 - - [06/Oct/2026:04:57:42 +0000] "GET /login HTTP/1.1" 200 992 "https://www.google.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36"
+177.231.65.109 - - [06/Oct/2026:04:57:43 +0000] "GET /login HTTP/1.1" 200 992 "https://www.google.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36"
+177.231.65.109 - - [06/Oct/2026:04:57:50 +0000] "GET /login HTTP/1.1" 200 2404 "https://www.google.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36"
+177.231.65.109 - - [06/Oct/2026:04:57:51 +0000] "GET /login HTTP/1.1" 200 992 "https://www.google.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36"
+177.231.65.109 - - [06/Oct/2026:04:57:51 +0000] "GET /login HTTP/1.1" 200 992 "https://www.google.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36"
+177.231.65.109 - - [06/Oct/2026:04:57:51 +0000] "GET /login HTTP/1.1" 200 992 "https://www.google.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36"
+177.231.65.109 - - [06/Oct/2026:04:57:51 +0000] "GET /login HTTP/1.1" 200 992 "https://www.google.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36"
+177.231.65.109 - - [06/Oct/2026:04:57:52 +0000] "GET /login HTTP/1.1" 200 992 "https://www.google.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36"
+177.231.65.109 - - [06/Oct/2026:04:57:52 +0000] "GET /login HTTP/1.1" 200 992 "https://www.google.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36"
+177.231.65.109 - - [06/Oct/2026:04:57:52 +0000] "GET /login HTTP/1.1" 200 992 "https://www.google.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36"
+177.231.65.109 - - [06/Oct/2026:04:58:46 +0000] "GET /login HTTP/1.1" 200 2404 "https://www.google.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36"
+177.231.65.109 - - [06/Oct/2026:04:58:47 +0000] "GET /login HTTP/1.1" 200 992 "https://www.google.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36"
+ubuntu@ip-10-0-2-117:~$ sudo grep 'POST /api/auth/login' /var/log/apache2/access.log | tail -20
+ubuntu@ip-10-0-2-117:~$ sudo grep -R 'POST /api/auth/login' /var/log/apache2/
+ubuntu@ip-10-0-2-117:~$ sudo apache2ctl -S
+AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 10.0.2.117. Set the 'ServerName' directive globally to suppress this message
+VirtualHost configuration:
+*:443                  alex.freedynamicdns.org (/etc/apache2/sites-enabled/000-default-le-ssl.conf:2)
+*:80                   10.0.2.117 (/etc/apache2/sites-enabled/000-default.conf:1)
+ServerRoot: "/etc/apache2"
+Main DocumentRoot: "/var/www/html"
+Main ErrorLog: "/var/log/apache2/error.log"
+Mutex default: dir="/run/apache2/" mechanism=default 
+Mutex watchdog-callback: using_defaults
+Mutex rewrite-map: using_defaults
+Mutex ssl-stapling-refresh: using_defaults
+Mutex ssl-stapling: using_defaults
+Mutex proxy: using_defaults
+Mutex ssl-cache: using_defaults
+PidFile: "/run/apache2/apache2.pid"
+Define: DUMP_VHOSTS
+Define: DUMP_RUN_CFG
+User: name="www-data" id=33
+Group: name="www-data" id=33
+ubuntu@ip-10-0-2-117:~$ sudo cat /etc/apache2/sites-enabled/000-default-le-ssl.conf
+<IfModule mod_ssl.c>
+<VirtualHost *:443>
+        # The ServerName directive sets the request scheme, hostname and port that
+        # the server uses to identify itself. This is used when creating
+        # redirection URLs. In the context of virtual hosts, the ServerName
+        # specifies what hostname must appear in the request's Host: header to
+        # match this virtual host. For the default virtual host (this file) this
+        # value is not decisive as it is used as a last resort host regardless.
+        # However, you must set it for any further virtual host explicitly.
+        #ServerName www.example.com
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/html
+
+        # Available loglevels: trace8, ..., trace1, debug, info, notice, warn,
+        # error, crit, alert, emerg.
+        # It is also possible to configure the loglevel for particular
+        # modules, e.g.
+        #LogLevel info ssl:warn
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
